@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Hello from HTML!</h1>
+
+    {% if red == True %}
+    <p style="color: red">{{ message }}</p>
+    {% else %}
+    <p>{{ message }}</p>
+    {% endif %}
+
+    <ul>
+      {% for person in html_people %}
+      <li>{{ person }}</li>
+      {% endfor %}
+    </ul>
+{% endblock %}
