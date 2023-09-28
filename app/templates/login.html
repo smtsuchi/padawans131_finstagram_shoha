@@ -1,24 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container col-4 border mt-5">
-    <h1>Login Page</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-
-        {{ form.username.label(class='form-label') }}
-        {{ form.username(class='form-control', placeholder='Username') }}
-
-        {{ form.password.label(class='form-label') }}
-        {{ form.password(class='form-control', placeholder='Password') }}
-
-        <div class="d-grid gap-2 my-3">
-            {{ form.submit(class='btn btn-primary') }}
-        </div>
-    </form>
-    {% if pokemon %}
-        {{ pokemon['name'] }}
-        {{ pokemon['ability'] }}
-    {% endif %}
+<div class="flexbox-item-main">
+    <a href="https://www.amazon.com/" target="_self">
+        <img src="{{ url_for('static', filename='finstagram.jpg' ) }}" alt="Amazon Logo">
+    </a>
 </div>
+<div class="flexbox-container">
+    <div class="flexbox-item-1">
+        <div id="login">
+            <h1>Sign-In</h1>
+            <form class="form-container" method="POST">
+                    {{ form.hidden_tag() }}
+                <div class="input-group">
+                    <label for="username">Email (phone for mobile accounts)</label>
+                    {{ form.username(placeholder='') }}
+                    <label id="password" for="password"><b>Password</b><a class="forgot-password" href="https://www.google.com/url?sa=i&url=https%3A%2F%2Ftenor.com%2Fview%2Fwell-that-sucks-too-bad-dwayne-johnson-the-rock-gif-17924926&psig=AOvVaw0ZkFvpJb_C8pAUvp8cSRmL&ust=1693544433861000&source=images&cd=vfe&opi=89978449&ved=0CA8QjRxqFwoTCIj35umOhoEDFQAAAAAdAAAAABAD">Forgot your password?</a></label>
+                    {{ form.password(placeholder='') }}
+                </div>
+                {{ form.submit(id='login-button') }}
+            </form>
+            <p id="agreement">By continuing, you agree to Amazon's <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GLSBYFE9MGKKQXXM" target="_blank">
+                Conditions of Use</a> and <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ" target="_blank">Privacy Notice</a>.</p>
+            <label id="check-box">
+                <input type="checkbox" class="check-box-bigger" name="keep-signed-in"> Keep me signed in. Details
+            </label>
+            <p id="text-in-hr"><strong>NEW TO FINSTAGRAM?</strong></p>
+        </div>
+        <div id="create-account" class="btn d-flex">
+            <a id="create-your-account" class="text-decoration-none text-dark flex-grow-1" href="/signup">Create your Finstagram account</a>
+        </div>
+    </div>
+</div>   
 {% endblock %}
