@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-4 border mt-5">
+    <div class="card mb-3" style="width: 18rem;">
+        <img src="{{ p.img_url }}" class="card-img-top" alt="{{ p.title }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ p.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ p.author.username }}</h6>
+            <p class="card-text">{{ p.caption }}</p>
+            {% if current_user in p.likers %}
+                <!-- unlike -->
+                <a href="{{ url_for('unlike', post_id=p.id) }}">
+                    <i class="fa-solid fa-heart"></i>
+                </a>
+            {% else %}
+                <!-- like -->
+                <a href="{{ url_for('like', post_id=p.id) }}">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+            {% endif %}
+        </div>
+        <div class="card-footer text-body-secondary">
+            {% if p.last_updated %}
+                Updated {{ moment(p.last_updated).fromNow() }}
+            {% else %}
+                Posted {{ moment(p.date_created).fromNow() }}
+            {% endif %}
+        </div>
+    </div>
+    {% if current_user.is_authenticated %}
+        {% if current_user.id == p.user_id %}
+            <!-- UPDATE -->
+            <a class="btn btn-primary" href="{{ url_for('update_post', post_id=p.id) }}">
+                Update
+            </a>
+
+            <!-- DELETE -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Delete
+            </button>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure you want to delete this post?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    This action cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('delete_post', post_id=p.id) }}">Delete</a>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+</div>
+{% endblock %}

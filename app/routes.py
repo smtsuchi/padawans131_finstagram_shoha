@@ -1,12 +1,9 @@
 from app import app
-from flask import redirect, render_template, request, url_for
+from flask import redirect, render_template, request, url_for, flash
 from .forms import LoginForm, SignUpForm, PostForm
 from .models import db, User, Post
 from flask_login import login_user, logout_user, current_user, login_required
-
-@app.route("/")
-def index():
-    return render_template('index.html')
+from datetime import datetime
 
 ## Authentication
 
@@ -16,7 +13,6 @@ def signup_page():
         return redirect(url_for('index'))
     form = SignUpForm()
     if request.method == 'POST':
-        print("POST REQUEST MADE!")
         if form.validate():
             username = form.username.data
             email = form.email.data
@@ -30,9 +26,9 @@ def signup_page():
             db.session.add(user)
             db.session.commit()
 
-
+            flash('Successfully created your account. Sign in now.', "success")
         else:
-            print("FORM INVALID! :(")
+            flash("Invalid form. Please try again.", 'error')
 
     return render_template('signup.html', form=form)
 
@@ -53,12 +49,12 @@ def login_page():
                 if user.password == password:
             # if passwords match, consider them logged in
                     login_user(user)
+                    flash('Successfully logged in.', 'success')
+                    return redirect(url_for('feed'))
                 else:
-                    print('passwords dont match')
+                    flash('Incorrect username/password combination.', 'danger')
             else:
-                print('that user doesnt exist')
-
-        return redirect(url_for('index'))
+                flash('That username does not exist.', 'danger')
     return render_template('login.html', form = form)
 
 @app.route('/logout')
@@ -82,12 +78,82 @@ def create_post():
 
             db.session.add(post)
             db.session.commit()
-
-            return redirect(url_for('index'))
+            flash('Successfully created your post.', 'success')
+            return redirect(url_for('feed'))
     return render_template('create-post.html', form=form)
 
+@app.route('/')
 @app.route('/posts')
 def feed():
-    posts = Post.query.all()
-    print(posts)
+    posts = Post.query.order_by(Post.date_created.desc()).all()
     return render_template('feed.html', posts=posts)
+
+@app.route('/posts/<post_id>')
+def individual_post_page(post_id):
+    post = Post.query.get(post_id)
+    # post = Post.query.filter_by(id=post_id).first()
+    
+    return render_template('individual-post.html', p=post)
+
+@app.route('/posts/update/<post_id>', methods=["GET", "POST"])
+@login_required
+def update_post(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        flash('That post does not exist', 'danger')
+        return redirect(url_for('feed'))
+    if current_user.id != post.user_id:
+        flash('You cannot edit another user\'s posts', 'danger')
+        return redirect(url_for('individual_post_page', post_id=post_id))
+    form = PostForm()
+    if request.method == "POST":
+        if form.validate():
+            title = form.title.data
+            img_url = form.img_url.data
+            caption = form.caption.data
+
+            post.title = title
+            post.img_url = img_url
+            post.caption = caption
+            post.last_updated = datetime.utcnow()
+
+            db.session.commit()
+            flash('Successfully updated your post.', 'success')
+            return redirect(url_for('individual_post_page', post_id=post_id))
+    return render_template('update-post.html', p=post, form = form)
+
+@app.route('/posts/delete/<post_id>', methods=["GET"])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        flash('That post does not exist', 'danger')
+        return redirect(url_for('feed'))
+    if current_user.id != post.user_id:
+        flash('You cannot delete another user\'s posts', 'danger')
+        return redirect(url_for('individual_post_page', post_id=post_id))
+    
+    db.session.delete(post)
+    db.session.commit()
+    flash('Successfully deleted your post', 'success')
+    return redirect(url_for('feed'))
+
+@app.route('/like/<post_id>')
+@login_required
+def like(post_id):
+    post = Post.query.get(post_id)
+    if post:
+        print(post.likers)
+        post.likers.append(current_user)
+        db.session.commit()
+    return redirect(url_for('individual_post_page', post_id=post_id))
+
+@app.route('/unlike/<post_id>')
+@login_required
+def unlike(post_id):
+    post = Post.query.get(post_id)
+    if post:
+        print(post.likers)
+        post.likers.remove(current_user)
+        db.session.commit()
+    return redirect(url_for('individual_post_page', post_id=post_id))

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-4 border mt-5">
+    <h1>Update your Post</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.title(class='form-control', placeholder='Title', value=p.title) }}
+
+        {{ form.img_url(class='form-control', placeholder='Image URL', value=p.img_url) }}
+        
+        {{ form.caption(class='form-control', placeholder='Caption', value=p.caption) }}
+
+        <div class="d-grid gap-2 my-3">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    </form>
+</div>
+
+
+
+{% endblock %}
+
+

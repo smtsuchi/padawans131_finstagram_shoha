@@ -18,5 +18,7 @@ def load_user(user_id):
     return User.query.filter_by(id=user_id).first()
 
 login_manager.login_view = 'login_page'
+login_manager.login_message='Please log in to access this page!'
+login_manager.login_message_category='danger'
 
 from . import routes
