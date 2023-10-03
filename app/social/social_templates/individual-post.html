@@ -10,12 +10,12 @@
             <p class="card-text">{{ p.caption }}</p>
             {% if current_user in p.likers %}
                 <!-- unlike -->
-                <a href="{{ url_for('unlike', post_id=p.id) }}">
+                <a href="{{ url_for('social.unlike', post_id=p.id) }}">
                     <i class="fa-solid fa-heart"></i>
                 </a>
             {% else %}
                 <!-- like -->
-                <a href="{{ url_for('like', post_id=p.id) }}">
+                <a href="{{ url_for('social.like', post_id=p.id) }}">
                     <i class="fa-regular fa-heart"></i>
                 </a>
             {% endif %}
@@ -31,7 +31,7 @@
     {% if current_user.is_authenticated %}
         {% if current_user.id == p.user_id %}
             <!-- UPDATE -->
-            <a class="btn btn-primary" href="{{ url_for('update_post', post_id=p.id) }}">
+            <a class="btn btn-primary" href="{{ url_for('social.update_post', post_id=p.id) }}">
                 Update
             </a>
 
@@ -53,7 +53,7 @@
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a type="button" class="btn btn-danger" href="{{ url_for('delete_post', post_id=p.id) }}">Delete</a>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('social.delete_post', post_id=p.id) }}">Delete</a>
                     </div>
                 </div>
                 </div>

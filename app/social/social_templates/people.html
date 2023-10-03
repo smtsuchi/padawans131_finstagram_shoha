@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-4 border mt-5">
+    <ul>
+        {% for u in users %}
+            <li>
+                <span>
+                    {{ u.username }}
+                </span>
+                {% if current_user.follows(u) %}
+                    <a class="btn btn-danger" href="{{ url_for('social.unfollow', user_id=u.id) }}">Unfollow</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ url_for('social.follow', user_id=u.id) }}">Follow</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

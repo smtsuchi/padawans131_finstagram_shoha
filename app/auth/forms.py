@@ -13,9 +13,3 @@ class LoginForm(FlaskForm):
     username = StringField(label='Username', validators=[DataRequired()])
     password = PasswordField("Password", [DataRequired()])
     submit = SubmitField("Sign-In")
-
-class PostForm(FlaskForm):
-    title = StringField(label='Title', validators=[DataRequired()])
-    img_url = StringField("Image URL", [DataRequired()])
-    caption = StringField("Caption")
-    submit = SubmitField()
