@@ -127,9 +127,12 @@ def unfollow(user_id):
         db.session.commit()
     return redirect(url_for('social.people_page'))
 
+import os
+NEWS_API_KEY = os.environ.get("NEWS_API_KEY")
+
 @social.route('/news')
 def news_page():
-    url = f"https://newsapi.org/v2/everything?q=bikes&apiKey=4ba2cb57066b49e2b7a8f20f5e0f65c6&pageSize=20"
+    url = f"https://newsapi.org/v2/everything?q=bikes&apiKey={NEWS_API_KEY}&pageSize=20"
     response = r.get(url)
     articles = []
     
