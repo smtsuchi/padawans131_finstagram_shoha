@@ -4,7 +4,7 @@ certifi==2023.7.22
 charset-normalizer==3.3.0
 click==8.1.7
 colorama==0.4.6
-Flask==2.3.3
+Flask
 Flask-Login==0.6.2
 Flask-Migrate==4.0.5
 Flask-Moment==1.0.5
