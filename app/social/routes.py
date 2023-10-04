@@ -1,9 +1,10 @@
 from . import social
 from flask import redirect, render_template, request, url_for, flash
-from .forms import PostForm
+from .forms import PostForm, PokeForm
 from ..models import db, User, Post
 from flask_login import current_user, login_required
 from datetime import datetime
+import requests as r
 
 ## Instagram
 @social.route('/posts/create', methods=["GET", "POST"])
@@ -125,3 +126,55 @@ def unfollow(user_id):
         current_user.following.remove(user)
         db.session.commit()
     return redirect(url_for('social.people_page'))
+
+@social.route('/news')
+def news_page():
+    url = f"https://newsapi.org/v2/everything?q=bikes&apiKey=4ba2cb57066b49e2b7a8f20f5e0f65c6&pageSize=20"
+    response = r.get(url)
+    articles = []
+    
+    if response.ok:
+        data = response.json()
+        articles = data['articles']
+        for a in articles:
+            timestamp = datetime.strptime(a['publishedAt'], "%Y-%m-%dT%H:%M:%SZ")
+            a['publishedAt'] = timestamp
+
+        
+    return render_template('news.html', articles = articles)
+
+def get_pokemon(name):
+    url = f"https://pokeapi.co/api/v2/pokemon/{name}"
+    response = r.get(url)
+    if response.ok:
+        data = response.json()
+        moves = data['moves']
+        move_names = []
+        for m in moves:
+            move_names.append(m['move']['name'])
+            if len(move_names) == 5:
+                break
+        
+        output = {
+            'name': data['species']['name'],
+            'img_url': data['sprites']['front_default'],
+            'attack': data['stats'][1]['base_stat'],
+            'hp': data['stats'][0]['base_stat'],
+            'defense': data['stats'][2]['base_stat'],
+            'moves': move_names
+            }
+    return output
+
+
+@social.route('/search', methods=["GET", "POST"])
+def serach_pokemon():
+    form = PokeForm()
+    if request.method == "POST":
+        if form.validate():
+            name = form.name.data
+
+            pokemon_data = get_pokemon(name)
+
+            return render_template('poke-search.html', pokemon=pokemon_data, form = form)
+    return render_template('poke-search.html', form=form)
+

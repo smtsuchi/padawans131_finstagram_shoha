@@ -9,12 +9,14 @@ from flask_moment import Moment
 from .social import social
 from .shop import shop
 from .auth import auth
+from .api import api
 
 app = Flask(__name__)
 app.config.from_object(Config)
 app.register_blueprint(social)
 app.register_blueprint(shop)
 app.register_blueprint(auth)
+app.register_blueprint(api)
 
 db.init_app(app)
 migrate = Migrate(app, db)

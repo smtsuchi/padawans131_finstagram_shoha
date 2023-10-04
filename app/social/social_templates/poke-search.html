@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-4 border mt-5">
+    <h1>Search for a pokemon</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.name(class='form-control', placeholder='Pokemon Name') }}
+        <div class="d-grid gap-2 my-3">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+
+        {% if pokemon %}
+            <div class="card" style="width: 18rem;">
+                <img src="{{ pokemon.img_url }}" class="card-img-top" alt="{{ pokemon.name }}">
+                <div class="card-body">
+                <h5 class="card-title">{{ pokemon.name }}</h5>
+                <p class="card-text">
+                    Attack: {{ pokemon.attack }} <br>
+                    Defense: {{ pokemon.defense }} <br>
+                    HP: {{ pokemon.hp }}
+                </p>
+                <ul class="list-group list-group-flush">
+                    {% for move in pokemon.moves %}
+                        <li class="list-group-item">{{ move }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="#" class="btn btn-primary">Catch</a>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

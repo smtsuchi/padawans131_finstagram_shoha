@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container border mt-5">
+    <div class="row">
+        {% for a in articles %}
+            <a target='_blank' href="{{ a.url }}" class="card mb-3 text-decoration-none" style="width: 18rem;">
+                <img src="{{ a.urlToImage }}" class="card-img-top" alt="{{ a.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ a['title'] }}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ a.author }} - {{ a.source.name }}</h6>
+                    <p class="card-text">{{ a.description }}</p>                
+                </div>
+                <div class="card-footer text-body-secondary">
+                    Published {{ moment(a.publishedAt).fromNow() }}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

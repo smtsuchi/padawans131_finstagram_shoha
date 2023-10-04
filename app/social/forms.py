@@ -7,3 +7,7 @@ class PostForm(FlaskForm):
     img_url = StringField("Image URL", [DataRequired()])
     caption = StringField("Caption")
     submit = SubmitField()
+
+class PokeForm(FlaskForm):
+    name = StringField(label='Look Up a Pokemon', validators=[DataRequired()])
+    submit = SubmitField()

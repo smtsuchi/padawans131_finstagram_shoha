@@ -58,6 +58,19 @@ class Post(db.Model):
 
     def like_count(self):
         return len(self.likers)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'caption': self.caption,
+            'img_url': self.img_url,
+            'user_id': self.user_id,
+            'author': self.author.username,
+            'date_created': self.date_created,
+            'last_updated': self.last_updated,
+            'like_count': self.like_count(),
+        }
 
 
 like = db.Table('like',
