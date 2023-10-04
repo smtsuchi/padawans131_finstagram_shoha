@@ -8,7 +8,7 @@ Flask
 Flask-Login==0.6.2
 Flask-Migrate==4.0.5
 Flask-Moment==1.0.5
-Flask-SQLAlchemy==3.1.1
+Flask-SQLAlchemy
 Flask-WTF==1.1.1
 greenlet==2.0.2
 gunicorn==21.2.0
