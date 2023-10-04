@@ -3,6 +3,7 @@ from flask import redirect, render_template, request, url_for, flash
 from .forms import LoginForm, SignUpForm
 from ..models import db, User
 from flask_login import login_user, logout_user, current_user
+from werkzeug.security import check_password_hash
 ## Authentication
 @auth.route("/signup", methods=["GET", "POST"])
 def signup_page():
@@ -44,7 +45,7 @@ def login_page():
             user = User.query.filter_by(username=username).first() 
             # if they exist, see if the password match
             if user:
-                if user.password == password:
+                if check_password_hash(user.password, password):
             # if passwords match, consider them logged in
                     login_user(user)
                     flash('Successfully logged in.', 'success')
@@ -60,4 +61,3 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login_page'))
 
-    

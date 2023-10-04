@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -29,7 +30,7 @@ class User(db.Model, UserMixin):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
 
     def get_following(self):
         following_set = {u.id for u in self.following}
