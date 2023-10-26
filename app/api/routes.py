@@ -1,6 +1,7 @@
 from . import api
-from ..models import db, Post
+from ..models import db, Post, User
 from flask import request
+from .apiauthhelper import basic_auth_required, token_auth_required, basic_auth, token_auth
 
 @api.get('/posts')
 def all_posts_api():
@@ -27,14 +28,14 @@ def single_post_api(post_id):
     }, 404
 
 @api.post('/posts/create')
-def create_post_api():
+@token_auth_required
+def create_post_api(user):
     data = request.json
     title = data['title']
     caption = data['caption']
     img_url = data['img_url']
-    user_id = data['user_id']
 
-    post = Post(title, img_url, caption, user_id)
+    post = Post(title, img_url, caption, user.id)
 
     db.session.add(post)
     db.session.commit()
@@ -44,3 +45,42 @@ def create_post_api():
         'message': "Successfully created the post."
     }, 201
 
+@api.post('/user/create')
+def create_user():
+    data = request.json
+    username = data['username']
+    email = data['email']
+    password = data['password']
+
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return {
+            'status': 'not ok',
+            'message': "That username is already taken."
+        }, 400
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return {
+            'status': 'not ok',
+            'message': "That email is already in use."
+        }, 400
+
+    user = User(username, email, password)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return {
+        'status': 'ok',
+        'message': "Successfully created your account!"
+    }, 201
+
+
+@api.post('/user/login')
+@basic_auth_required
+def login_user(user):
+    return {
+        'status': 'ok',
+        'user': user.to_dict(),
+        'message': "Successfully logged in."
+    }, 200

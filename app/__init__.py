@@ -4,6 +4,7 @@ from .models import db, User
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_moment import Moment
+from flask_cors import CORS
 
 # import Blueprints
 from .social import social
@@ -22,6 +23,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 moment = Moment(app)
+cors = CORS(app)
 
 @login_manager.user_loader
 def load_user(user_id):

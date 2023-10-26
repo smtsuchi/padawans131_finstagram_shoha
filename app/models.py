@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
+from secrets import token_hex
 
 db = SQLAlchemy()
 
@@ -17,6 +18,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     first_name = db.Column(db.String(45))
+    token = db.Column(db.String, unique=True)
     
     posts = db.relationship("Post", backref='author')
     following = db.relationship(
@@ -31,6 +33,7 @@ class User(db.Model, UserMixin):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password)
+        self.token = token_hex(16)
 
     def get_following(self):
         following_set = {u.id for u in self.following}
@@ -38,6 +41,18 @@ class User(db.Model, UserMixin):
 
     def follows(self, user):
         return user.id in self.get_following()
+    
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'id': self.id,
+            'date_created': self.date_created,
+            'first_name': self.first_name,
+            'token': self.token,
+            'follower_count': len(self.followers),
+            'following_count': len(self.following),
+        }
 
 
 class Post(db.Model):
